@@ -3,7 +3,7 @@ from app.routers.user import user_router
 from fastapi import FastAPI
 from app.DB.database import Base,engine
 from app.routers import user
-
+from app.DB.models import User
 
 
 def create_tables():

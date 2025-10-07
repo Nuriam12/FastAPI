@@ -7,7 +7,8 @@ from datetime  import  datetime
 
 #user Model
 class User(BaseModel): #esquema
-    id:int
+    username: str
+    password:str
     nombre:str
     apellido:str
     direccion:Optional[str]= None

@@ -17,23 +17,42 @@ def ruta1():
 
 @user_router.get('/')
 def obtener_usuarios(DB:Session = Depends(get_DB)):
-    data = d
+    data = DB.query(models.User).all()
+    print(data)
     return usuarios
 
 @user_router.post('/') #creamos usuario 
-def  crear_usuario(user:User):
+def  crear_usuario(user:User,DB:Session = Depends(get_DB)):
     usuario  = user.model_dump()#model_dump se usa para convertir la informacion en un diccionario
-    usuarios.append(usuario) 
-    print(usuario)
+    #usuarios.append(usuario) 
+    nuevo_user = models.User( #creamos el usuario y se inserta en la tabla user
+        username= usuario["username"],
+        password= usuario["password"],
+        nombre= usuario["nombre"],
+        apellido= usuario["apellido"],
+        direccion= usuario["direccion"],
+        telefono= usuario["telefono"],
+        correo= usuario["correo"],
+    )
+    DB.add(nuevo_user)
+    DB.commit()
+    DB.refresh(nuevo_user)
+
     return {"respuesta":"usuario creado satisfactoriamente"}
 
+#------------------------------------------------------------------------------------------------------
+
 @user_router.get('/{user_id}') #obtenemos informaacion del usuario con el id
-def obtener_usuario(user_id:int):
-    for user in usuarios :
-        print(user,type(user))
-        if user["id"] == user_id:
-            return {"usuario" : user}
-    return{"respuesta":"usuario no encontrado"}
+def obtener_usuario(user_id:int,DB:Session = Depends(get_DB)):
+    #for user in usuarios :
+    #    print(user,type(user))
+    #   if user["id"] == user_id:
+    #        return {"usuario" : user}
+
+    usuario = DB.query (models.User).filter(models.User.id == user_id).first()
+    if not usuario :
+        return {"Respuesta" : "usuario no encontrado!!"}
+    return usuario
 
 @user_router.post('/obtener_usuario') #segundo metodo para obtener usuario
 def obtener_usuario_2(user_id:UserId):
