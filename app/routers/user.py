@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
-from app.schemas import User,UserId #importamos el esquema (parametros)
-from app.DB.database import get_DB #importamos la funcion de la base de datos
+from app.schemas import User,ShowUser,UpdateUser #importamos el esquema (parametros)
+from app.DB.database import get_DB # Dependencia que genera la sesión con la BD
 from sqlalchemy.orm import Session
-from app.DB import models
+from typing import List #importamos formato de lista
+from app.repository import user
+
 
 user_router = APIRouter(
     prefix="/user",
@@ -11,73 +13,40 @@ user_router = APIRouter(
 
 usuarios = []
 
-@user_router.get('/ruta1')
-def ruta1():
-    return{"mensaje":"Me gusta la pinga del lepras :3 "}
 
-@user_router.get('/')
+#obtenemos la informacion de todos los usuarios creados
+ 
+@user_router.get('/' ,response_model=List[ShowUser]) #usamos list[] y response para entregar informacion especifica que marca el esquema y lo entregamos en formato de lista
 def obtener_usuarios(DB:Session = Depends(get_DB)):
-    data = DB.query(models.User).all()
-    print(data)
-    return usuarios
+    data = user.obtener_usuarios(DB)
+    return data
 
-@user_router.post('/') #creamos usuario 
-def  crear_usuario(user:User,DB:Session = Depends(get_DB)):
-    usuario  = user.model_dump()#model_dump se usa para convertir la informacion en un diccionario
-    #usuarios.append(usuario) 
-    nuevo_user = models.User( #creamos el usuario y se inserta en la tabla user
-        username= usuario["username"],
-        password= usuario["password"],
-        nombre= usuario["nombre"],
-        apellido= usuario["apellido"],
-        direccion= usuario["direccion"],
-        telefono= usuario["telefono"],
-        correo= usuario["correo"],
-    )
-    DB.add(nuevo_user)
-    DB.commit()
-    DB.refresh(nuevo_user)
 
+@user_router.post('/')
+def  crear_usuario(usuario:User,DB:Session = Depends(get_DB)):
+    user.crear_usuario(usuario,DB)
     return {"respuesta":"usuario creado satisfactoriamente"}
 
-#------------------------------------------------------------------------------------------------------
 
-@user_router.get('/{user_id}') #obtenemos informaacion del usuario con el id
+
+
+@user_router.get('/{user_id}',response_model=ShowUser   ) #usamos response model con el esquema "ShowUser" , para entregar informacion especifica al usuario
 def obtener_usuario(user_id:int,DB:Session = Depends(get_DB)):
-    #for user in usuarios :
-    #    print(user,type(user))
-    #   if user["id"] == user_id:
-    #        return {"usuario" : user}
-
-    usuario = DB.query (models.User).filter(models.User.id == user_id).first()
-    if not usuario :
-        return {"Respuesta" : "usuario no encontrado!!"}
+    usuario=user.obtener_usuario(user_id,DB)
     return usuario
 
-@user_router.post('/obtener_usuario') #segundo metodo para obtener usuario
-def obtener_usuario_2(user_id:UserId):
-    for user in usuarios :
-        print(user,type(user))
-        if user["id"] == user_id.id:
-            return {"usuario" : user}
-    return{"respuesta":"usuario no encontrado"}
 
-@user_router.delete('/') #eliminamos usuario
-def eliminar_usuario(user_id:int):
-    for index,user in enumerate(usuarios):
-        if user["id"] == user_id:
-            usuarios.pop(index)
-            return{"respuesta":"usuario eliminado correctamente"}
-    return {"respuesta":"usuario no encontrado"}
 
-@user_router.put('/{user_id}') #ACTUALIZAMOS INFORMACION DEL USUARIO 
-def actualizar_usuario(user_id:int,updateUser:User):
-    for index,user in enumerate(usuarios):
-        if user["id"] == user_id:
-            usuarios[index]["id"] = updateUser.model_dump()["id"]
-            usuarios[index]["nombre"] = updateUser.model_dump()["nombre"]
-            usuarios[index]["apellido"] = updateUser.model_dump()["apellido"]
-            usuarios[index]["direccion"] = updateUser.model_dump()["direccion"]
-            usuarios[index]["telefono"] = updateUser.model_dump()["telefono"]
-            return {"respuesta":"usuario actualizado correctamente"}
-    return {"respuesta":"usuario no encontrado"}
+
+@user_router.delete('/') 
+def eliminar_usuario(user_id:int,DB:Session = Depends(get_DB)):
+    res= user.eliminar_usuario(user_id,DB)
+    return res
+
+
+
+
+@user_router.patch('/{user_id}')  
+def actualizar_user(user_id:int,updateUser:UpdateUser,DB:Session = Depends(get_DB)):
+    res = user.actualizar_user(user_id,updateUser,DB)
+    return res

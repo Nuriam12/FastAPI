@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel #pydantic : Librería para validación y serialización de datos. // BaseModel Clase base de la que heredan tus modelos para definir los esquemas y validaciones
 from typing import Optional
 from datetime  import  datetime
 
@@ -16,6 +16,18 @@ class User(BaseModel): #esquema
     correo:str
     creacion:datetime= datetime.now()
 
+ #--------------------------------------------------
+
+ #update Model
+class UpdateUser(BaseModel): #esquema
+    username: Optional[str] = None
+    password: Optional[str] = None
+    nombre: Optional[str] = None
+    apellido: Optional[str] = None
+    direccion: Optional[str] = None
+    telefono: Optional[int] = None
+    correo: Optional[str] = "LNF@gmail.com"
+
 class UserId(BaseModel):
     id:int
 
@@ -23,3 +35,9 @@ class UserId(BaseModel):
 #POST : enviamos informacion
 #PUT : actualizamos informacion
 #DELETE : eliminamoos informacion
+
+#------------------------------------------------------------------------------------
+class ShowUser(BaseModel) :
+    username: str
+    nombre:str
+    correo:str
