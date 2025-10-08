@@ -16,8 +16,6 @@ class User(BaseModel): #esquema
     correo:str
     creacion:datetime= datetime.now()
 
- #--------------------------------------------------
-
  #update Model
 class UpdateUser(BaseModel): #esquema
     username: Optional[str] = None
@@ -26,7 +24,7 @@ class UpdateUser(BaseModel): #esquema
     apellido: Optional[str] = None
     direccion: Optional[str] = None
     telefono: Optional[int] = None
-    correo: Optional[str] = "LNF@gmail.com"
+    correo: Optional[str] = None
 
 class UserId(BaseModel):
     id:int
@@ -36,8 +34,21 @@ class UserId(BaseModel):
 #PUT : actualizamos informacion
 #DELETE : eliminamoos informacion
 
-#------------------------------------------------------------------------------------
+
 class ShowUser(BaseModel) :
     username: str
     nombre:str
     correo:str
+
+class Login(BaseModel) :
+    username:str 
+    password:str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None

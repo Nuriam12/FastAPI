@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from app.schemas import User,ShowUser,UpdateUser #importamos el esquema (parametros)
 from app.DB.database import get_DB # Dependencia que genera la sesión con la BD
 from sqlalchemy.orm import Session
@@ -16,13 +16,13 @@ usuarios = []
 
 #obtenemos la informacion de todos los usuarios creados
  
-@user_router.get('/' ,response_model=List[ShowUser]) #usamos list[] y response para entregar informacion especifica que marca el esquema y lo entregamos en formato de lista
+@user_router.get('/' ,response_model=List[ShowUser],status_code=status.HTTP_200_OK) #usamos list[] y response para entregar informacion especifica que marca el esquema y lo entregamos en formato de lista
 def obtener_usuarios(DB:Session = Depends(get_DB)):
     data = user.obtener_usuarios(DB)
     return data
 
 
-@user_router.post('/')
+@user_router.post('/',status_code=status.HTTP_201_CREATED)
 def  crear_usuario(usuario:User,DB:Session = Depends(get_DB)):
     user.crear_usuario(usuario,DB)
     return {"respuesta":"usuario creado satisfactoriamente"}
@@ -38,7 +38,7 @@ def obtener_usuario(user_id:int,DB:Session = Depends(get_DB)):
 
 
 
-@user_router.delete('/') 
+@user_router.delete('/',status_code=status.HTTP_200_OK) 
 def eliminar_usuario(user_id:int,DB:Session = Depends(get_DB)):
     res= user.eliminar_usuario(user_id,DB)
     return res
