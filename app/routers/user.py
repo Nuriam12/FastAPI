@@ -4,6 +4,7 @@ from app.DB.database import get_DB # Dependencia que genera la sesión con la BD
 from sqlalchemy.orm import Session
 from typing import List #importamos formato de lista
 from app.repository import user
+from app.oauth import get_current_user
 
 
 user_router = APIRouter(
@@ -17,7 +18,7 @@ usuarios = []
 #obtenemos la informacion de todos los usuarios creados
  
 @user_router.get('/' ,response_model=List[ShowUser],status_code=status.HTTP_200_OK) #usamos list[] y response para entregar informacion especifica que marca el esquema y lo entregamos en formato de lista
-def obtener_usuarios(DB:Session = Depends(get_DB)):
+def obtener_usuarios(DB:Session = Depends(get_DB),current_user:User = Depends(get_current_user)):
     data = user.obtener_usuarios(DB)
     return data
 
