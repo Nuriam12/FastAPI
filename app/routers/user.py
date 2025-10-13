@@ -24,7 +24,7 @@ def obtener_usuarios(DB:Session = Depends(get_DB),current_user:User = Depends(ge
 
 
 @user_router.post('/',status_code=status.HTTP_201_CREATED)
-def  crear_usuario(usuario:User,DB:Session = Depends(get_DB)):
+def  crear_usuario(usuario:User,DB:Session = Depends(get_DB),current_user: User = Depends(get_current_user)):
     user.crear_usuario(usuario,DB)
     return {"respuesta":"usuario creado satisfactoriamente"}
 
@@ -39,7 +39,7 @@ def obtener_usuario(user_id:int,DB:Session = Depends(get_DB)):
 
 
 
-@user_router.delete('/',status_code=status.HTTP_200_OK) 
+@user_router.delete('/{user_id}',status_code=status.HTTP_200_OK) 
 def eliminar_usuario(user_id:int,DB:Session = Depends(get_DB)):
     res= user.eliminar_usuario(user_id,DB)
     return res
