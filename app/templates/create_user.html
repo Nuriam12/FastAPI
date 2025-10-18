@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    {% if msj|length > 1%}
+        <h1>{{msj}}</h1>
+        <div class="alert alert-{{type}} alert-dismissible fade show" role="alert">
+            <strong>{{msj}}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+        </div>
+    {% endif %}    
+    <h1 class="text-center">formulario para crear usuario</h1>
+    <form action="/register" method="post">
+        <div>
+            <label for="username" class="form-label">username</label>
+            <input type="text" class="form-control" name="username" placeholder="username" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">password</label>
+            <input type="password" class="form-control" name="password" placeholder="contraseña"required>
+        </div>
+        <div>
+            <label for="nombre" class="form-label">nombre</label>
+            <input type="text" class="form-control" name="nombre" placeholder="nombre"required>
+        </div>
+        <div>
+            <label for="apellido" class="form-label">apellido</label>
+            <input type="text" class="form-control" name="apellido" placeholder="apellido"required>
+        </div>
+        <div>
+            <label for="direccion" class="form-label">direccion</label>
+            <input type="text" class="form-control" name="direccion" placeholder="direccion"required>
+        </div>
+        <div>
+            <label for="telefono" class="form-label">telefono</label>
+            <input type="number" class="form-control" name="telefono" placeholder="telefono"required>
+        </div>
+        <div>
+            <label for="correo" class="form-label">correo</label>
+            <input type="email" class="form-control" name="correo" placeholder="correo">
+        </div>
+         <div>
+            <label for="creacion" class="form-label">creacion</label>
+            <input type="text" class="form-control" name="creacion" placeholder="creacion">
+        </div>
+        <button type="submit" class="btn btn-primary">crear usuario</button>
+    </form>
+
+
+</div>
+
+<!-- 
+    id = Column(Integer, primary_key=True,autoincrement=True, index=True)
+    username = Column(String,unique=True)
+    password = Column(String)
+    nombre = Column(String, index=True)
+    apellido = Column(String)
+    direccion = Column(String)
+    telefono = Column(Integer)
+    correo = Column(String, unique=True, index=True)
+    creacion = Column(DateTime,default=datetime.now,onupdate=datetime.now)
+    estado = Column(Boolean, default=False)
+    Venta = relationship("Venta", backref="usuario",cascade="delete,merge")
+-->
+
+{% endblock %}

@@ -9,7 +9,7 @@ from typing import Annotated
 
 auth_router = APIRouter(
     prefix="/login",
-    tags=["Login"]
+    tags=["in"]
 )
 
 @auth_router.post('/',status_code=status.HTTP_200_OK) 

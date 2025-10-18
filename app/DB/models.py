@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship #agregamos relacion entre tablas
 
 class User(Base):
     __tablename__ = "usuario"
-
     id = Column(Integer, primary_key=True,autoincrement=True, index=True)
     username = Column(String,unique=True)
     password = Column(String)
